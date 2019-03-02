@@ -1,0 +1,105 @@
+import java.util.*;
+
+
+public class MinWinSubStringTest {
+	
+	public static void main(String[] args)
+	{
+		MinWinSubStringTest mWinStr = new MinWinSubStringTest();
+		Scanner sc_in = new Scanner(System.in);
+		String Str = sc_in.nextLine();
+		String Test = sc_in.nextLine();
+
+		//System.out.println("Minimum Window Substring: " + mWinStr.minWindow(Str,Test));
+		System.out.println(mWinStr.minWindow(Str,Test));
+		sc_in.close();
+	}
+
+	
+	public String minWindow(String str, String test) 
+	{
+		if(test.length() > str.length() || str.length()>70)
+		{
+			return "";
+		}
+		
+		String minWin = "";
+		
+		
+		
+		HashMap<Character, Integer> target = new HashMap<Character, Integer>();
+		
+		for(int i=0; i<test.length(); i++)
+		{
+			char ch = test.charAt(i);
+			
+			if(target.containsKey(ch))
+			{
+				target.put(ch,target.get(ch)+1);
+			}
+			else
+			{
+				target.put(ch,1);
+			}
+		}
+		
+		
+		
+		HashMap<Character, Integer> map = new HashMap<Character, Integer>();
+		
+		int Lwin = 0;
+		int minSize = str.length()+1;
+		
+		int freq = 0; 
+		
+		for(int i=0; i<str.length(); i++)
+		{
+			char ch = str.charAt(i);
+			
+			if(target.containsKey(ch))
+			{
+				if(map.containsKey(ch))
+				{
+					if(map.get(ch)<target.get(ch))
+					{	
+						freq++;
+					}
+					
+					map.put(ch,map.get(ch)+1);
+				}
+				else
+				{
+					map.put(ch,1);
+					freq++;
+		
+				}
+			}
+			
+			if(freq == test.length())
+			{
+				char scan = str.charAt(Lwin);
+				
+				while (!map.containsKey(scan) || map.get(scan) > target.get(scan)) 
+				{
+					if (map.containsKey(scan) && map.get(scan) > target.get(scan))
+					{
+						map.put(scan, map.get(scan) - 1);
+					}
+					
+					Lwin++;
+					scan = str.charAt(Lwin);
+				}
+				
+				if (i - Lwin + 1 < minSize) 
+				{
+					minWin = str.substring(Lwin, i + 1);
+					minSize = i - Lwin + 1;		
+				}
+			}
+		}
+	 
+		return minWin;
+	
+	}
+		
+}

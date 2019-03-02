@@ -1,0 +1,120 @@
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
+ 
+class CCGraph
+{
+    static final int MAXV      = 100;
+    static final int MAXDEGREE = 50;
+    public int       edges[][] = new int[MAXV + 1][MAXDEGREE];
+    public int       degree[]  = new int[MAXV + 1];
+    public int       nvertices;
+    public int       nedges;
+ 
+    CCGraph()
+    {
+        nvertices = nedges = 0;
+        for (int i = 1; i <= MAXV; i++)
+            degree[i] = 0;
+    }
+ 
+    void read_CCGraph(boolean d)
+    {
+        int x, y;
+        Scanner sc = new Scanner(System.in);
+        nvertices = sc.nextInt();
+      
+        int m = sc.nextInt();
+      
+        for (int i = 1; i <= m; i++)
+        {
+            x = sc.nextInt();
+            y = sc.nextInt();
+            insert_edge(x, y, d);
+        }
+        sc.close();
+    }
+ 
+    void insert_edge(int x, int y, boolean d)
+    {
+        if (degree[x] > MAXDEGREE)
+            System.out.printf(
+                    "Warning: insertion (%d, %d) exceeds max degree\n", x, y);
+        edges[x][degree[x]] = y;
+        degree[x]++;
+        if (!d)
+            insert_edge(y, x, true);
+        else
+            nedges++;
+    }
+}
+ 
+public class ConnectedComponents
+{
+    static final int MAXV         = 100;
+    static boolean   processed[]  = new boolean[MAXV];
+    static boolean   discovered[] = new boolean[MAXV];
+    static int       parent[]     = new int[MAXV];
+ 
+    static void bfs(CCGraph g, int start)
+    {
+        Queue<Integer> q = new LinkedList<Integer>();
+        int i, v;
+        q.offer(start);
+        discovered[start] = true;
+        while (!q.isEmpty())
+        {
+            v = q.remove();
+            processed[v] = true;
+            for (i = g.degree[v] - 1; i >= 0; i--)
+            {
+                if (!discovered[g.edges[v][i]])
+                {
+                    q.offer(g.edges[v][i]);
+                    discovered[g.edges[v][i]] = true;
+                    parent[g.edges[v][i]] = v;
+                }
+            }
+        }
+    }
+ 
+    static void initialize_search(CCGraph g)
+    {
+        for (int i = 1; i <= g.nvertices; i++)
+        {
+            processed[i] = discovered[i] = false;
+            parent[i] = -1;
+        }
+    }
+ 
+    static void connected_components(CCGraph g)
+    {
+        int c;
+        initialize_search(g);
+        c = 0;
+        for (int i = 1; i <= g.nvertices; i++)
+        {
+            if (!discovered[i])
+            {
+                c++;
+                bfs(g, i);
+            }      
+        }
+        
+            if(c==1){
+                System.out.print(1);
+                System.out.print(1);
+            }
+            else{
+                System.out.print(0);
+                System.out.print(c);
+            }
+    }
+ 
+    static public void main(String[] args)
+    {
+        CCGraph g = new CCGraph();
+        g.read_CCGraph(false);
+        connected_components(g);
+    }
+}
